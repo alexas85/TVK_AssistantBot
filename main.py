@@ -1,13 +1,17 @@
+# main.py
 import telebot
-import config
-from handlers import objects as obj_handlers
-from database import init_db
+from handlers.status_handler import process_status_callback, show_status_keyboard, State
+from config import BOT_TOKEN
 
-if __name__ == "__main__":
-    init_db()
-    bot = telebot.TeleBot(config.BOT_TOKEN, parse_mode="HTML")
+bot = telebot.TeleBot(BOT_TOKEN)
 
-    obj_handlers.register_objects_handlers(bot)
+@bot.callback_query_handler(func=lambda call: call.data.startswith('status_') or call.data == 'cancel_status')
+def callback_status(call):
+    # Импортируем подключение к БД здесь или передаем через глобальную переменную
+    from database import get_connection
+    conn = get_connection()
+    process_status_callback(call, bot, conn)
 
-    print("TVK AssistantBot запущен...")
-    bot.infinity_polling()
+@bot.message_handler(commands=['set_status'])
+def cmd_set_status(message):
+    show_status_keyboard(message, bot)
