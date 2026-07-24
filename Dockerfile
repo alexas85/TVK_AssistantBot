@@ -2,12 +2,18 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Копируем зависимости и ставим их
+# Установка зависимостей
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Копируем весь проект
+# Копирование кода
 COPY . .
 
-# Запускаем бота
-CMD ["python", "main.py"]
+# Скрипт запуска (миграции + бот)
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+# Порт (если нужен для здоровья, но для телеграма не обязателен)
+EXPOSE 8080
+
+ENTRYPOINT ["/app/entrypoint.sh"]
