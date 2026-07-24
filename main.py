@@ -27,12 +27,12 @@ bot = telebot.TeleBot(BOT_TOKEN)
 
 import handlers.contact_handler as contact_h
 # Перепривязываем хендлеры к нашему экземпляру бота
-bot.message_handler(commands=['add_contacts'])(contact_h.start_contacts_flow)
-bot.message_handler(func=lambda msg: contact_h.user_states.get(msg.from_user.id) == contact_h.ContactState.WAIT_COMPANY)(contact_h.process_company)
-bot.message_handler(func=lambda msg: contact_h.user_states.get(msg.from_user.id) == contact_h.ContactState.WAIT_POSITION)(contact_h.process_position)
-bot.message_handler(func=lambda msg: contact_h.user_states.get(msg.from_user.id) == contact_h.ContactState.WAIT_NAME)(contact_h.process_name)
-bot.message_handler(func=lambda msg: contact_h.user_states.get(msg.from_user.id) == contact_h.ContactState.WAIT_PHONE)(contact_h.process_phone)
-bot.callback_query_handler(func=lambda call: call.data in ['save_contact', 'cancel_contact'])(contact_h.confirm_contact_action)
+bot.message_handler(commands=['add_contacts'])(lambda m: contact_h.start_contacts_flow(m, bot))
+bot.message_handler(func=lambda msg: contact_h.user_states.get(msg.from_user.id) == contact_h.ContactState.WAIT_COMPANY)(lambda m: contact_h.process_company(m, bot))
+bot.message_handler(func=lambda msg: contact_h.user_states.get(msg.from_user.id) == contact_h.ContactState.WAIT_POSITION)(lambda m: contact_h.process_position(m, bot))
+bot.message_handler(func=lambda msg: contact_h.user_states.get(msg.from_user.id) == contact_h.ContactState.WAIT_NAME)(lambda m: contact_h.process_name(m, bot))
+bot.message_handler(func=lambda msg: contact_h.user_states.get(msg.from_user.id) == contact_h.ContactState.WAIT_PHONE)(lambda m: contact_h.process_phone(m, bot))
+bot.callback_query_handler(func=lambda call: call.data in ['save_contact', 'cancel_contact'])(lambda c: contact_h.confirm_contact_action(c, bot))
 
 # --- РЕГИСТРАЦИЯ ХЕНДЛЕРОВ ДЛЯ СТАТУСОВ ---
 bot.callback_query_handler(func=lambda call: call.data.startswith('status_') or call.data == 'cancel_status')(

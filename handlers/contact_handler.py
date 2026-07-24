@@ -18,7 +18,6 @@ class ContactState:
 
 
 # 1. Обработчик команды /add_contacts (ТО, ЧЕГО НЕ ХВАТАЛО)
-@telebot.util.message_handler(commands=['add_contacts'])
 def start_contacts_flow(message, bot):
     user_id = message.from_user.id
     user_temp_data[user_id] = {}
@@ -31,7 +30,6 @@ def start_contacts_flow(message, bot):
 
 
 # 2. Обработчики пошагового ввода
-@telebot.util.message_handler(func=lambda msg: user_states.get(msg.from_user.id) == ContactState.WAIT_COMPANY)
 def process_company(message, bot):
     user_id = message.from_user.id
     user_temp_data[user_id]['company'] = message.text
@@ -39,7 +37,6 @@ def process_company(message, bot):
     bot.send_message(user_id, "💼 Теперь введите должность контакта:")
 
 
-@telebot.util.message_handler(func=lambda msg: user_states.get(msg.from_user.id) == ContactState.WAIT_POSITION)
 def process_position(message, bot):
     user_id = message.from_user.id
     user_temp_data[user_id]['position'] = message.text
@@ -47,7 +44,6 @@ def process_position(message, bot):
     bot.send_message(user_id, "👤 Теперь введите ФИО контакта:")
 
 
-@telebot.util.message_handler(func=lambda msg: user_states.get(msg.from_user.id) == ContactState.WAIT_NAME)
 def process_name(message, bot):
     user_id = message.from_user.id
     user_temp_data[user_id]['name'] = message.text
@@ -55,7 +51,6 @@ def process_name(message, bot):
     bot.send_message(user_id, "📱 И наконец, номер телефона:")
 
 
-@telebot.util.message_handler(func=lambda msg: user_states.get(msg.from_user.id) == ContactState.WAIT_PHONE)
 def process_phone(message, bot):
     user_id = message.from_user.id
     user_temp_data[user_id]['phone'] = message.text
@@ -81,7 +76,6 @@ def process_phone(message, bot):
 
 
 # 3. Обработчик кнопок (Сохранить / Отмена)
-@telebot.util.callback_query_handler(func=lambda call: call.data in ['save_contact', 'cancel_contact'])
 def confirm_contact_action(call, bot):
     user_id = call.from_user.id
 
