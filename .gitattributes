@@ -1,0 +1,12 @@
+# Скрипты запуска должны храниться и выдаваться строго в LF,
+# иначе в контейнере Docker падает "exec: no such file or directory"
+entrypoint.sh       text eol=lf
+
+# Прочие текстовые файлы — по умолчанию, autocrlf как настроено
+*.py            text
+*.txt           text
+*.md            text
+*.json          text
+*.xml           text
+Dockerfile      text
+*.sh            text eol=lf

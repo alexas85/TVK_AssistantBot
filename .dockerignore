@@ -1,0 +1,20 @@
+# Git и IDE
+.git
+.gitignore
+.gitattributes
+.idea/
+.gigaide/
+.vscode/
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Базы данных
+*.db
+*.sqlite3
+
+# Локальные секреты
+.env
