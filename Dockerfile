@@ -9,11 +9,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копирование кода
 COPY . .
 
-# Скрипт запуска (миграции + бот)
+# Скрипт запуска: убираем возможные CR (\r) из переводов строк и ставим права.
+# Это исключает ошибку "exec: no such file or directory" от CRLF-шебанга.
 COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod +x /app/entrypoint.sh
 
-# Порт (если нужен для здоровья, но для телеграма не обязателен)
+# Запускаем shell ЯВНО (не полагаемся на shebang и права исполнения)
+ENTRYPOINT ["/bin/sh", "/app/entrypoint.sh"]
+
+# Порт (для healthcheck, если нужен; сам бот его не использует)
 EXPOSE 8080
-
-ENTRYPOINT ["/app/entrypoint.sh"]
