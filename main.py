@@ -1,8 +1,10 @@
 import telebot
 import os
-from handlers.contact_handler import start_contacts_flow, handle_contact_name
+from handlers.objects import register_objects_handlers
+from handlers.status_handler import register_status_handlers
+from database import run_migration
 
-# 1. Получаем токен из переменных окружения (обязательно для DADA)
+# 1. Получаем токен из переменных окружения (обязательно для DADA Console)
 TOKEN = os.getenv("BOT_TOKEN")
 if not TOKEN:
     raise ValueError("❌ Ошибка: Переменная окружения BOT_TOKEN не найдена!")
@@ -13,22 +15,14 @@ if ":" not in TOKEN:
 
 bot = telebot.TeleBot(TOKEN)
 
+# 2. Применяем миграции БД при старте
+run_migration()
+
+# 3. Регистрируем хендлеры
+register_status_handlers(bot)
+register_objects_handlers(bot)
+
 print("🤖 Бот инициализирован. Ожидание команд...")
-
-# 2. Регистрируем команды и хендлеры ЗДЕСЬ
-@bot.message_handler(commands=['start'])
-def send_welcome(message):
-    bot.reply_to(message, "Привет! Я бот TVK Assistant. Используй /add_contacts для добавления.")
-
-@bot.message_handler(commands=['add_contacts'])
-def cmd_add_contacts(message):
-    # Вызываем логику из handlers
-    start_contacts_flow(message, bot)
-
-# Пример хендлера для текста (если нужно ловить любой текст)
-# @bot.message_handler(func=lambda message: True)
-# def echo_all(message):
-#     bot.reply_to(message, message.text)
 
 if __name__ == "__main__":
     try:
